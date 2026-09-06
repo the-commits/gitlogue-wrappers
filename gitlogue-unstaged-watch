@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# gitlogue-unstaged-watch — auto-launch `gitlogue diff --unstaged` when the
+# working tree gets unstaged changes. Uses inotify (via inotify-tools).
+#
+# "Unstaged" = edits git sees in tracked files that you haven't `git add`-ed
+# yet — i.e. it replays your raw typing as you save; the commit comes
+# separately (see gitlogue-commits-watch).
+#
+# Usage:   gitlogue-unstaged-watch [repo-dir]
+# Env:     GITLOGUE_SPEED  typing speed in ms/char   (default 10)
+#          GITLOGUE_QUIET  debounce seconds of calm  (default 0.5)
+#
+# Needs:   inotify-tools (pacman -S --needed inotify-tools)
+set -euo pipefail
+
+DIR="${1:-.}"
+SPEED="${GITLOGUE_SPEED:-10}"
+QUIET="${GITLOGUE_QUIET:-0.5}"
+
+for bin in inotifywait gitlogue git; do
+	if ! command -v "$bin" >/dev/null 2>&1; then
+		echo "gitlogue-unstaged-watch: missing '$bin'" >&2
+		[ "$bin" = inotifywait ] && echo "  install it: sudo pacman -S --needed inotify-tools" >&2
+		exit 1
+	fi
+done
+
+# .git internals fire constantly; never watch them.
+EXCLUDE='(^|/)\.git/'
+EVENTS='modify,close_write,create,delete,move'
+
+events="$(mktemp)"
+trap 'kill "$watcher" 2>/dev/null || true; rm -f "$events"' EXIT
+
+# Monitor mode: events are appended even while gitlogue is on screen,
+# so edits made during an animation are never lost.
+inotifywait -m -r -q -e "$EVENTS" --exclude "$EXCLUDE" "$DIR" >>"$events" &
+watcher=$!
+
+echo "watching $DIR for unstaged changes (quit gitlogue with q, watcher with Ctrl-C)"
+
+while :; do
+	if [ -s "$events" ]; then
+		sleep "$QUIET" # debounce: let the save burst finish
+		: >"$events"   # consume the burst
+		if ! git -C "$DIR" diff --quiet; then
+			gitlogue --path "$DIR" diff --unstaged --background=false --speed "$SPEED"
+		fi
+	else
+		sleep 0.2
+	fi
+done
