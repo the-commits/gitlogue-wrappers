@@ -29,13 +29,7 @@ enjoy this, please ⭐️ star the
 [upstream project](https://github.com/unhappychoice/gitlogue) and consider
 supporting it — it is a gift to the terminal.
 
-```bash
-# get gitlogue (choose one)
-brew install gitlogue            # macOS / Homebrew
-cargo install gitlogue           # via Rust/cargo
-sudo pacman -S gitlogue          # Arch Linux
-curl -fsSL https://raw.githubusercontent.com/unhappychoice/gitlogue/main/install.sh | bash
-```
+Install it https://github.com/unhappychoice/gitlogue#installation
 
 ## The wrappers
 
