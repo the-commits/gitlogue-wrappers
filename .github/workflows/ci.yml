@@ -12,6 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Rust
+        uses: dtolnay/rust-action@stable
+
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -19,7 +22,7 @@ jobs:
 
       - name: Install gitlogue
         run: |
-          curl -fsSL https://raw.githubusercontent.com/unhappychoice/gitlogue/main/install.sh | bash
+          cargo install gitlogue
 
       - name: Run install script
         run: |
@@ -31,21 +34,21 @@ jobs:
           test -x "$HOME/.local/bin/gitlogue-commits-watch"
           test -x "$HOME/.local/bin/gitlogue-unstaged-watch"
 
-      - name: Test wrapper smoke run
+      - name: Test unstaged wrapper smoke run
         run: |
           repo="$(mktemp -d)"
-          git init "$repo"
           cd "$repo"
+          git init -q
+          git config user.email "ci@example.com"
+          git config user.name "CI"
           echo "hello" > file.txt
           git add file.txt
           git commit -m "init" -q
 
-          timeout 3 "$HOME/.local/bin/gitlogue-commits-watch" "$repo" &
+          timeout 3 "$HOME/.local/bin/gitlogue-unstaged-watch" "$repo" &
           pid=$!
           sleep 1
           echo "change" >> file.txt
-          git add file.txt
-          git commit -m "second" -q
           wait "$pid" || true
 
           rm -rf "$repo"
@@ -55,13 +58,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Rust
+        uses: dtolnay/rust-action@stable
+
       - name: Install dependencies
         run: |
           brew install bash fswatch
 
       - name: Install gitlogue
         run: |
-          curl -fsSL https://raw.githubusercontent.com/unhappychoice/gitlogue/main/install.sh | bash
+          cargo install gitlogue
 
       - name: Run install script
         run: |
@@ -73,21 +79,21 @@ jobs:
           test -x "$HOME/.local/bin/gitlogue-commits-watch"
           test -x "$HOME/.local/bin/gitlogue-unstaged-watch"
 
-      - name: Test wrapper smoke run
+      - name: Test unstaged wrapper smoke run
         run: |
           repo="$(mktemp -d)"
-          git init "$repo"
           cd "$repo"
+          git init -q
+          git config user.email "ci@example.com"
+          git config user.name "CI"
           echo "hello" > file.txt
           git add file.txt
           git commit -m "init" -q
 
-          timeout 3 "$HOME/.local/bin/gitlogue-commits-watch" "$repo" &
+          timeout 3 "$HOME/.local/bin/gitlogue-unstaged-watch" "$repo" &
           pid=$!
           sleep 1
           echo "change" >> file.txt
-          git add file.txt
-          git commit -m "second" -q
           wait "$pid" || true
 
           rm -rf "$repo"
