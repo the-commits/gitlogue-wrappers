@@ -48,7 +48,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/bin}"
 
 install_gitlogue() {
-	curl -fsSL https://raw.githubusercontent.com/unhappychoice/gitlogue/main/scripts/install.sh | bash
+	curl -fsSL https://raw.githubusercontent.com/unhappychoice/gitlogue/main/install.sh | bash
 }
 
 install_watcher() {
