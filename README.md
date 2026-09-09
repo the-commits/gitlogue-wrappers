@@ -10,6 +10,12 @@ curl -fsSL https://raw.githubusercontent.com/the-commits/gitlogue-wrappers/main/
 
 This installs gitlogue, installs `inotify-tools` on Linux or `fswatch` on macOS, and copies the matching wrappers to `~/.local/bin` (override with `INSTALL_DIR`).
 
+On macOS you can also install [gitlogue](https://github.com/unhappychoice/gitlogue) and fswatch via Homebrew:
+
+```bash
+brew install gitlogue fswatch
+```
+
 ## Usage
 
 ```bash

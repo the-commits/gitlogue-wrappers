@@ -12,9 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rust
-        uses: dtolnay/rust-action@stable
-
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -58,16 +55,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rust
-        uses: dtolnay/rust-action@stable
-
       - name: Install dependencies
         run: |
-          brew install bash fswatch
-
-      - name: Install gitlogue
-        run: |
-          cargo install gitlogue
+          brew install bash gitlogue fswatch
 
       - name: Run install script
         run: |
