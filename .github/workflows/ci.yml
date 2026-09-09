@@ -60,7 +60,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install bash gitlogue fswatch
+          brew install bash coreutils gitlogue fswatch
 
       - name: Run install script
         run: |
