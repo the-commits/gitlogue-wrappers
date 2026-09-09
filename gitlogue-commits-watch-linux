@@ -1,17 +1,6 @@
 #!/usr/bin/env bash
-# gitlogue-commits-watch — follow the AI (or anyone) in real time: every new
-# commit that lands on the current branch is replayed automatically.
-#
-# Pause/resume inside the animation with Space, step with n/p, quit with q.
-# Commits made while gitlogue is open queue up and play (oldest first) as
-# soon as the current animation ends. Ctrl-C stops following.
-#
-# Usage:   gitlogue-commits-watch [repo-dir]
-# Env:     GITLOGUE_SPEED   typing speed ms/char     (default 10)
-#          GITLOGUE_QUIET   debounce seconds of calm (default 0.5)
-#          GITLOGUE_LATEST  1 = replay current HEAD once at startup (default 0)
-#
-# Needs:   inotify-tools (pacman -S --needed inotify-tools)
+# gitlogue-commits-watch — Linux/inotifywait version.
+# Replays every new commit on the current branch automatically.
 set -euo pipefail
 
 DIR="${1:-.}"

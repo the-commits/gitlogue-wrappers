@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# gitlogue-unstaged-watch — macOS/fswatch version.
+# Auto-launch `gitlogue diff --unstaged` when the working tree changes.
+set -euo pipefail
+
+DIR="${1:-.}"
+SPEED="${GITLOGUE_SPEED:-10}"
+QUIET="${GITLOGUE_QUIET:-0.5}"
+
+for bin in fswatch gitlogue git; do
+	if ! command -v "$bin" >/dev/null 2>&1; then
+		echo "gitlogue-unstaged-watch: missing '$bin'" >&2
+		[ "$bin" = fswatch ] && echo "  install it: brew install fswatch" >&2
+		exit 1
+	fi
+done
+
+events="$(mktemp)"
+trap 'kill "$watcher" 2>/dev/null || true; rm -f "$events"' EXIT
+
+# fswatch does not support regex excludes like inotifywait; it filters
+# efficiently at the FSEvents level, so the burst/quiet loop still works.
+fswatch -r "$DIR" >>"$events" &
+watcher=$!
+
+echo "watching $DIR for unstaged changes (quit gitlogue with q, watcher with Ctrl-C)"
+
+while :; do
+	if [ -s "$events" ]; then
+		sleep "$QUIET" # debounce: let the save burst finish
+		: >"$events"   # consume the burst
+		if ! git -C "$DIR" diff --quiet; then
+			gitlogue --path "$DIR" diff --unstaged --background=false --speed "$SPEED"
+		fi
+	else
+		sleep 0.2
+	fi
+done

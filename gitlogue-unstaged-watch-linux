@@ -1,16 +1,6 @@
 #!/usr/bin/env bash
-# gitlogue-unstaged-watch — auto-launch `gitlogue diff --unstaged` when the
-# working tree gets unstaged changes. Uses inotify (via inotify-tools).
-#
-# "Unstaged" = edits git sees in tracked files that you haven't `git add`-ed
-# yet — i.e. it replays your raw typing as you save; the commit comes
-# separately (see gitlogue-commits-watch).
-#
-# Usage:   gitlogue-unstaged-watch [repo-dir]
-# Env:     GITLOGUE_SPEED  typing speed in ms/char   (default 10)
-#          GITLOGUE_QUIET  debounce seconds of calm  (default 0.5)
-#
-# Needs:   inotify-tools (pacman -S --needed inotify-tools)
+# gitlogue-unstaged-watch — Linux/inotifywait version.
+# Auto-launch `gitlogue diff --unstaged` when the working tree changes.
 set -euo pipefail
 
 DIR="${1:-.}"
